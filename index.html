@@ -1,1 +1,38 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>صقور العرب</title>
+<style>
+body{margin:0;background:#0f172a;color:white;font-family:sans-serif;text-align:center;overflow:hidden}
+h1{margin:10px 0;color:#facc15}
+#game{width:95vw;max-width:420px;height:520px;background:linear-gradient(#38bdf8,#0f172a);margin:auto;position:relative;overflow:hidden;border-radius:15px;border:3px solid #facc15}
+#player{position:absolute;bottom:15px;left:45%;font-size:45px}
+.enemy{position:absolute;font-size:35px}
+.bullet{position:absolute;width:6px;height:18px;background:#facc15;border-radius:5px}
+#score{font-size:22px;margin:10px}
+button{background:#facc15;border:none;padding:12px 25px;font-size:20px;font-weight:bold;border-radius:10px;cursor:pointer}
+</style>
+</head>
+<body>
+<h1>🦅 صقور العرب</h1>
+<div id="score">النقاط : 0</div>
+<div id="game"><div id="player">🦅</div></div>
+<br>
+<button onclick="startGame()">ابدأ اللعب ▶️</button>
+<p>حرك الصقر بصبعك و اضرب الأعداء</p>
+<script>
+let game=document.getElementById('game');
+let player=document.getElementById('player');
+let scoreEl=document.getElementById('score');
+let score=0, playing=false, px=45;
+function startGame(){ if(playing) return; playing=true; score=0; scoreEl.textContent='النقاط : 0'; document.querySelectorAll('.enemy,.bullet').forEach(e=>e.remove()); spawn(); shoot(); }
+function spawn(){ if(!playing) return; let e=document.createElement('div'); e.className='enemy'; e.textContent='🛩️'; e.style.left=Math.random()*85+'%'; e.style.top='-40px'; game.appendChild(e); let y=-40; let iv=setInterval(()=>{ y+=3; e.style.top=y+'px'; if(y>500){ clearInterval(iv); e.remove(); if(playing){ playing=false; alert('انتهت اللعبة ! نقاطك : '+score); } } },30); setTimeout(spawn,900); }
+function shoot(){ if(!playing) return; let b=document.createElement('div'); b.className='bullet'; b.style.left=(px+5)+'%'; b.style.bottom='65px'; game.appendChild(b); let y=65; let iv=setInterval(()=>{ y+=8; b.style.bottom=y+'px'; document.querySelectorAll('.enemy').forEach(en=>{ let er=en.getBoundingClientRect(); let br=b.getBoundingClientRect(); if(br.top<er.bottom && br.bottom>er.top && br.left<er.right && br.right>er.left){ en.remove(); b.remove(); clearInterval(iv); score+=10; scoreEl.textContent='النقاط : '+score; } }); if(y>520){ clearInterval(iv); b.remove(); } },30); setTimeout(shoot,350); }
+game.addEventListener('touchmove',e=>{ let r=game.getBoundingClientRect(); px=((e.touches[0].clientX-r.left)/r.width*100)-5; player.style.left=px+'%'; });
+game.addEventListener('mousemove',e=>{ let r=game.getBoundingClientRect(); px=((e.clientX-r.left)/r.width*100)-5; player.style.left=px+'%'; });
+</script>
+</body>
+</html>
